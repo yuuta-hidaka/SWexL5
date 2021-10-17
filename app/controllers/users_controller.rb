@@ -6,17 +6,21 @@ class UsersController < ApplicationController
         @user = User.new
     end
     def create
-        @user = User.new(uid: params[:user][:uid],pass: params[:user][:pass])
+        uid= params[:user][:uid]
+        pass= params[:user][:pass]
+        $login_password = BCrypt::Password.create(pass)
+        @user = User.new(uid: uid,pass: $login_password)
         if @user.save
             flash[:notice] = 'ユーザー登録しました'
             redirect_to users_path
         else
             render'new'
+            redirect_to root_path
         end
     end
     def destroy
         user = User.find(params[:id])
         user.destroy
-        redirect_to root_path
+        redirect_to users_path
     end
 end
